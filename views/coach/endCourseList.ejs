@@ -1,0 +1,57 @@
+<%- partial('./partial/sidemenu.ejs')%>
+    <div class="content admin w-100">
+        <h5 class="main-heading1">
+            執教<span class="highlight">課程</span>
+
+
+
+        </h5>
+        <section class="section">
+            <h6 class="main-heading2 mb-0">現時課程</h6>
+            <span id="search"></span>
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr class="text-center">
+                        <th>課程編號（難度）</th>
+                        <th>日期及時間</th>
+                        <th>地點</th>
+                        <th>狀態</th>
+                        <th>行動</th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody id="listing">
+                    <!--Data-->
+
+                    <% course.forEach( function(c) { %>
+                        <tr class="text-center">
+                            <td>
+                                <%= c.courseID %>(<%= c.level %>)
+                            </td>
+                            <td>
+                                逢星期<%= c.weekday %><br>
+                                    <%= c.time %><br>
+                                        <%= c.startDate %>至<%= c.endDate %>
+                            </td>
+                            <td>
+                                <%= c.stadium %>
+                            </td>
+                            <td>
+                                <%= c.fstatus %>
+                            </td>
+                            <td>
+                                <a class="" href="/coach/passFail/<%= c.id %>">
+                                    <button type="button" class="btn btn-primary btn-sm">輸入成績</button>
+                                </a>
+                            </td>
+
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </section>
+
+
+
+    </div>

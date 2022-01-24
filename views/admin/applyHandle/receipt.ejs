@@ -1,0 +1,198 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<section class="section">
+    <div class="mainPage">
+        <br><br>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4 col-xs-3">
+                    <div class="card  text-center">OFFICIAL RECEIPT</div>
+                </div>
+                <div class="col-sm-4 col-xs-3">
+                    <div class="card  text-center">
+                        <label id="receiptid"></label>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-xs-3">
+                    <div class="card  text-center" id="date">Date:</div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="ChiName">中國香港體操總會</div>
+                <div class="EngName">THE GYMNASTICS ASSOCIATION OF HONG KONG, CHINA</div>
+
+                <br>
+
+                <div class="col-sm-6 col-xs-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div>
+                                <label style="margin-right: 10px;" id="user">茲收到: <%=
+                                        application.applicationOwner.ChiName %>
+                                </label>
+                            </div>
+                            <div>
+                                <label style="margin-right: 10px;" id="amountUp"></label>
+                            </div>
+                            <div>
+                                <label style="margin-right: 10px;" id="usage">用途: 支付報名
+                                    <%=application.course.courseID%>
+                                        <%=application.course.category%>訓練班的費用
+                                </label>
+                            </div>
+                            <div>
+                                <div class="HKD">
+                                    <label style="margin-right: 10px;">港幣: $<%= application.produce[0].amount %></label>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xs-6">
+                    <% if(application.produce[0].payMethod=='cheque' ) { %>
+                        <div class="card">
+                            <div class="card-body">
+                                </br>
+                                <div>
+                                    <div class="cheque">支票編號: <%=application.produce[0].cheque%>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="cheque">所屬銀行: <%=application.produce[0].bank%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+</section>
+
+<br><br>
+
+<div class="print text-center">
+ 
+    <button class="btn btn-primary" type="submit" onclick="saveAndReturn()"
+        style="background-color:#008CBA;border-radius: 8px;color: aliceblue;border: none; padding: 15px 32px; margin: 15 32; text-align: center;text-decoration: none; display: inline-block;font-size: 16px;">
+        儲存並列印</button>
+
+        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+
+    <button class="btn btn-danger" type="submit"
+        style="background-color:#DC143C;border-radius: 8px;color: aliceblue;border: none; padding: 15px 32px; margin: 15 32; text-align: center;text-decoration: none; display: inline-block;font-size: 16px;"
+        onclick="deleteReceipt()">刪除收據</button>
+
+</div>
+
+<style>
+    .ChiName {
+        font-size: xx-large;
+        font-weight: bold;
+        float: initial;
+        text-align: center;
+    }
+
+    .EngName {
+        font-size: x-large;
+        font-weight: bold;
+        float: initial;
+        text-align: center;
+    }
+
+    .HKD {
+        font-size: x-large;
+        float: initial;
+
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .mainPage,
+        .mainPage * {
+            visibility: visible;
+        }
+    }
+</style>
+
+<script>
+    function deleteReceipt() {
+        var c = confirm("確認刪除?");
+        if (c)
+            location.assign('/receipt/delete/<%= application.produce[0].id %>');
+    }
+</script>
+
+<script>
+    var a = parseInt("<%= application.produce[0].id %>");
+    var num = "<%= application.produce[0].id %>";
+    if (a < 10) num = "00000" + num;
+    else if (a < 100) num = "0000" + num;
+    else if (a < 1000) num = "000" + num;
+    else if (a < 10000) num = "00" + num;
+    else if (a < 100000) num = "0" + num;
+
+    document.getElementById("receiptid").innerHTML = "R  " + num;
+
+</script>
+
+<script>
+    function saveAndReturn() {
+        window.print();
+        var c = confirm("返回上一頁?");
+        if (c)
+            location.assign('/admin/course/<%= application.course.id %>/applicant');
+    }
+</script>
+
+<script>
+    n = new Date();
+    y = n.getFullYear();
+    m = n.getMonth() + 1;
+    d = n.getDate();
+    document.getElementById("date").innerHTML = "Date: " + d + "/" + m + "/" + y;
+</script>
+<script>
+    function generUpClassAmount(fee) {
+        str = fee + '';
+        var len = str.length - 1;
+        var idxs = ['', '拾', '百', '千', '萬', '拾', '百', '千', '', '拾', '百', '千', '萬', '拾', '百', '千', '億'];
+        var num = ['零', '壹', '貳', '叁', '肆', '伍', '陸', '柒', '捌', '玖'];
+        return str.replace(/([1-9]|0+)/g, function ($, $1, idx, full) {
+            var pos = 0;
+            if ($1[0] != '0') {
+                pos = len - idx;
+                if (idx == 0 && $1[0] == 1 && idxs[len - idx] == '十') {
+                    return idxs[len - idx];
+                }
+                return num[$1[0]] + idxs[len - idx];
+            } else {
+                var left = len - idx;
+                var right = len - idx + $1.length;
+                if (Math.floor(right / 4) - Math.floor(left / 4) > 0) {
+                    pos = left - left % 4;
+                }
+                if (pos) {
+                    return idxs[pos] + num[$1[0]];
+                } else if (idx + $1.length >= len) {
+                    return '';
+                } else {
+                    return num[$1[0]]
+                }
+            }
+        });
+    }
+    document.getElementById("amountUp").innerHTML = "合計港幣：" + generUpClassAmount("<%=application.produce[0].amount%>") + "元正";
+
+</script>

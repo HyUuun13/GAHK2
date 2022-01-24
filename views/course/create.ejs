@@ -1,0 +1,352 @@
+<%- partial('../admin/partial/sidemenu.ejs') %>
+  <div class="content admin w-100">
+    <h5 class="main-heading1">
+      課程管理<span class="highlight">系統</span>
+
+    </h5>
+
+    <section>
+      <h6 class="main-heading2 mb-0">創建課程</h6>
+      <form onsubmit="submitForm(this);return false" action="/course/create" method="POST">
+        
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">編號</label>
+              <input class="form-control text-uppercase" id="courseID" type="text" name="courseID" required>
+
+            </div>
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">體操類別</label>
+
+              <select class="form-control" id="category" name="category" oninput="checkLevel()"
+                onchange="categorySelected(this.value)" required>
+                <option value="">請選擇體操類別</option>
+
+                <option value="技巧體操">技巧體操</option>
+
+                <option value="健美體操">健美體操</option>
+
+                <option value="競技體操">競技體操</option>
+
+                <option value="普及體操">普及體操</option>
+
+                <option value="藝術體操">藝術體操</option>
+
+                <option value="彈網訓練">彈網訓練</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <!-- <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">名稱</label>
+              <input class="form-control" type="text" name="name" required>
+            </div> -->
+
+            <div class="col-12 col-lg-6 form-group d-flex ">
+              <label class="flex-shrink-0 col-form-label">難度</label>&nbsp;
+
+              <select class="form-control" id="level" name="level" disabled required>
+                <!-- <option value="">請選擇難度 Select Level</option>
+
+                <option value="L1">第一級</option>
+
+                <option value="L2">第二級</option>
+
+                <option value="L3">第三級</option> -->
+              </select>
+            </div>
+            <div class="col-12 col-lg-6 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">教練</label>
+              <!-- <input class="form-control" list="coaches" name="coach" required> -->
+              <select class="form-control" id="coaches" name="coach">
+                <option value="">請選擇教練</option>
+                <% Coaches.forEach(function (coach){ %>
+                  <option value="<%=coach.id%>">
+                    <%=coach.id%>. <%=coach.ChiName%>
+                  </option>
+                  <% }); %>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">開始日期</label>
+
+              <input id="startDate" class="form-control" type="date" name="startDate" required>
+            </div>
+            <div class="col-12 col-lg-6 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">完結日期</label>&nbsp;
+              <input id="endDate" class="form-control" type="date" name="endDate">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">星期</label>
+              &nbsp;
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="mon" value="1" name="weekday"><label
+                  class="form-check-label" for="mon">一</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="tue" value="2" name="weekday"><label
+                  class="form-check-label" for="tue">二</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="wed" value="3" name="weekday"><label
+                  class="form-check-label" for="wed">三</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="thu" value="4" name="weekday"><label
+                  class="form-check-label" for="thu">四</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="fri" value="5" name="weekday"><label
+                  class="form-check-label" for="fri">五</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="sat" value="6" name="weekday"><label
+                  class="form-check-label" for="sat">六</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="sun" value="0" name="weekday"><label
+                  class="form-check-label" for="sun">日</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-lg-9 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">所有上課日期</label> &nbsp;
+              <textarea id="dates" class="form-control" name="dates"></textarea>
+            </div>
+            <div class="col-12 col-lg-2 form-group d-flex">
+              <span style="margin: 20% 0;" class="btn btn-primary" onclick="genDates()">
+                生成日期
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">截止日期</label>
+              <input id="deadline" class="form-control" type="date" name="appDeadline" required></input>
+            </div>
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">時間</label>
+              <input class="form-control" type="text" name="time" required></input>
+            </div>
+
+          </div>
+
+          <div class="row">
+
+            <div class="col-12 col-lg-6 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">年齡下限</label>&nbsp;
+              <input class="form-control" type="number" name="minAge" id="minAge" min="0"></input>
+            </div>
+            <div class="col-12 col-lg-6 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">年齡上限</label>&nbsp;
+              <input class="form-control" type="number" name="maxAge" id="maxAge" min="0"></input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">體育館</label>
+              <input list="stadiums" name="stadium" id="stadium" required>
+              <datalist id="stadiums">
+                <% stadiums.forEach(function (stadium){ %>
+                  <option value="<%=stadium.name%>">
+                    <% }); %>
+              </datalist>
+            </div>
+            <div class="col-12 col-lg-6 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">場地</label>&nbsp;
+              <input class="form-control" type="text" name="space"></textarea>
+            </div>
+          </div>
+          <div class="row">
+
+          </div>
+          <div class="row">
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">名額</label>
+              <input class="form-control" type="number" name="quota" min="1" required>
+            </div>
+            <div class="col-12 col-lg-6 form-group d-flex required">
+              <label class="flex-shrink-0 col-form-label">費用</label>
+              <input class="form-control" type="number" name="fee" min="1" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 form-group d-flex">
+              <label class="flex-shrink-0 col-form-label">內文</label>&nbsp;
+              <textarea class="form-control" name="detail"></textarea>
+            </div>
+          </div>
+    </section>
+    <div class="row ml-2">
+      <div class="col-12 col-lg-6 form-group d-flex">
+        <button class="btn btn-dark" onclick="window.history.back()">返回</button>
+      </div>
+      <div class="col-12 col-lg-3 form-group ml-auto mr-3 d-flex">
+        <button class="btn btn-primary" type="submit">
+          創建
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  </div>
+
+  <script>
+    async function submitForm(formElem) {
+
+      var minAge = parseInt(document.getElementById('minAge').value);
+      var maxAge = parseInt(document.getElementById('maxAge').value);
+      var startDate = document.getElementById('startDate').value;
+      var endDate = document.getElementById('endDate').value;
+
+      if(minAge != "" && maxAge != ""){
+        if(minAge > maxAge) {
+          alert("年齡下限不能大於上限");
+          return;
+        }
+      }
+
+      if(startDate > endDate) {
+        alert("開始日期不能遲於完結日期");
+        return;
+      }
+
+      var response = await fetch(formElem.action, {
+          method: formElem.method,
+          body: new FormData(formElem),
+      });
+      if(response.ok){
+          location.assign('/admin/course/list');
+      }  else {
+          var data = await response.json();
+          alert(data);
+      }
+    }
+  </script>
+
+
+
+
+
+  <script>
+    var courseId = document.getElementById("courseID");
+    courseId.addEventListener('focusout', function () {
+      this.value = this.value.toLocaleUpperCase();
+    });
+  </script>
+
+  <script>
+    function checkLevel() {
+      var cat = document.getElementById("category").value;
+      var levelElem = document.getElementById("level");
+      var allLevel = [["L1", "第一級"], ["L2", "第二級"], ["L3", "第三級"]];
+      var noLevel = ["N/A"];
+      levelElem.options.length = 0;
+
+      if (cat != "普及體操" && cat != "") {
+        allLevel.forEach(function (item) {
+          var option = document.createElement("option");
+          option.text = item[1];
+          option.value = item[0];
+          levelElem.add(option);
+          levelElem.disabled = false;
+        });
+      } else {
+        var option = document.createElement("option");
+        option.text = noLevel;
+        option.value = noLevel[0];
+        levelElem.add(option);
+        levelElem.disabled = false;
+      }
+    }
+  </script>
+
+  <script>
+    var sDate = document.getElementById("startDate");
+    var eDate = document.getElementById("endDate");
+    var dates = document.getElementById("dates");
+    function genDates() {
+      var sd = new Date(sDate.value);
+      var ed = new Date(eDate.value);
+      var mon = document.getElementById("mon");
+      var tue = document.getElementById("tue");
+      var wed = document.getElementById("wed");
+      var thu = document.getElementById("thu");
+      var fri = document.getElementById("fri");
+      var sat = document.getElementById("sat");
+      var sun = document.getElementById("sun");
+      datesList = [];
+      thirdLesson = new Date();
+      for (var d = sd.getTime(); new Date(d).getTime() <= ed.getTime(); d += 3600 * 24 * 1000) {
+        var today = new Date(d);
+        if (today.getDay() == 0 && sun.checked) {
+          datesList.push(today.getDate() + "/" + (today.getMonth() + 1));
+          if (datesList.length == 3) { thirdLesson = today };
+        }
+        if (today.getDay() == 1 && mon.checked) {
+          datesList.push(today.getDate() + "/" + (today.getMonth() + 1));
+          if (datesList.length == 3) { thirdLesson = today };
+        }
+        if (today.getDay() == 2 && tue.checked) {
+          datesList.push(today.getDate() + "/" + (today.getMonth() + 1));
+          if (datesList.length == 3) { thirdLesson = today };
+        }
+        if (today.getDay() == 3 && wed.checked) {
+          datesList.push(today.getDate() + "/" + (today.getMonth() + 1));
+          if (datesList.length == 3) { thirdLesson = today };
+        }
+        if (today.getDay() == 4 && thu.checked) {
+          datesList.push(today.getDate() + "/" + (today.getMonth() + 1));
+          if (datesList.length == 3) { thirdLesson = today };
+        }
+        if (today.getDay() == 5 && fri.checked) {
+          datesList.push(today.getDate() + "/" + (today.getMonth() + 1));
+          if (datesList.length == 3) { thirdLesson = today };
+        }
+        if (today.getDay() == 6 && sat.checked) {
+          datesList.push(today.getDate() + "/" + (today.getMonth() + 1));
+          if (datesList.length == 3) { thirdLesson = today };
+        }
+      }
+      dates.value = datesList.join(', ');
+      document.getElementById("deadline").value = thirdLesson.getFullYear() + "-" + ((thirdLesson.getMonth() < 9 ? '0' : '') + (thirdLesson.getMonth() + 1)) + "-" + ((thirdLesson.getDate() < 10 ? '0' : '') + thirdLesson.getDate());
+    }
+
+    if ('<%=error%>') {
+      alert('<%=error%>');
+    }
+  </script>
+
+  <script>
+    async function categorySelected(category) {
+      var allCoach = await '<%- JSON.stringify(Coaches) %>';
+      allCoach = JSON.parse(allCoach);
+      var coachElem = document.getElementById("coaches");
+      coachElem.options.length = 0;
+      var option = document.createElement("option");
+      option.text = "請選擇教練";
+      option.value = "";
+      coachElem.add(option);
+      for (var i = 0; i < allCoach.length; i++) {
+        var thatCoach = allCoach[i];
+        if ((thatCoach.coach[0].disciplines).includes(category) || (category == "競技體操" && ((thatCoach.coach[0].disciplines).includes("男子競技體操") || (thatCoach.coach[0].disciplines).includes("女子競技體操")))) {
+          // console.log(thatCoach.coach[0].disciplines);
+          var option = document.createElement("option");
+          option.text = thatCoach.id + ". " + thatCoach.ChiName;
+          option.value = thatCoach.id;
+          coachElem.add(option);
+        }
+      }
+
+    }
+  </script>

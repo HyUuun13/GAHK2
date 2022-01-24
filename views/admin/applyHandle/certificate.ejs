@@ -1,0 +1,63 @@
+<%- partial('../partial/sidemenu.ejs') %>
+    <div class="content admin w-100">
+        <h5 class="main-heading1">
+            證書申請管理<span class="highlight">系統</span>
+        </h5>
+        <section>
+            <form action="/admin/certificate/all" method="POST" >
+                <div class="row mx-sm-2">
+                    <div class="form-group col-12 col-sm-6">
+                        <label style="color: #888888; font-size: 16pt;" class="col-form-label">編號 Course Code</label>
+                        <input class="form-control" id="courseID" name="courseID"
+                            placeholder="請輸入編號 Input Course Code"></input>
+                    </div>
+                    <div class="form-group col-12 col-sm-6">
+                        <label style="color: #888888; font-size: 16pt;" class="col-form-label">學期 Phase</label>
+                        <%var todayYear=new Date().getFullYear(); var end=todayYear + 2;%>
+                            <select class="form-control" id="phase" name="phase">
+                                <option value="">請選擇學期 Select Phase</option>
+                                <% if (firstCourse && lastCourse) {
+                                    var startYear = parseInt(firstCourse.startDate.split('-')[0]);
+                                   var lastYear = parseInt(lastCourse.endDate.split('-')[0]);
+                                %>
+                                    <% for (var year=startYear; year <=lastYear; year++){%>
+                                    <option value="<%=year%>,1">
+                                        <%=year%> Phase 1
+                                    </option>
+                                    <option value="<%=year%>,2">
+                                        <%=year%> Phase 2
+                                    </option>
+                                    <%}%>
+                                <% }%>
+                            </select>
+                    </div>
+
+                    <div class="col-12 col-sm-10 d-flex flex-column-reverse">
+                        <button type="submit" class="btn btn-primary" 
+                            style="background-color: #83a70c; border-color: #83a70c; margin:auto;">下載
+                            Download</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        async function submitForm(formElem) {
+            var response = await fetch(formElem.action, {
+                method: formElem.method,
+                body: new FormData(formElem),
+            });
+            if(response.ok){
+                // var data = await response.json();
+                // alert(data);
+                // location.assign('/admin/certificate/all');
+            } else if (response.status == 404) {
+                var data = await response.json();
+                alert(data);
+            }  else {
+                var data = await response.json();
+                alert(data);
+            }
+        }
+    </script>

@@ -1,0 +1,213 @@
+<!-- <style>
+    .dropdown-content {
+      display: none;
+      z-index: 1;
+    }
+    .show {
+      display:block;
+    }
+  </style> -->
+<style>
+  .list-group-item {
+    line-height: 34px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .badge {
+    padding: 1em .4em;
+  }
+
+  .badge-light {
+    background-color: #2220;
+  }
+</style>
+
+<aside>
+  <section>
+    <h6 class="side-heading3"><span class="reflect" data-text="訓練班">訓練班</span></h6>
+    <div class="card">
+      <article class="card-group-item">
+        <header class="side-heading2"><span class="reflect">項目 </span><a class="btn btn-dark btn-sm float-right" href="javascript:void(0)" onclick="reset()">重設</a></header>
+        <!-- <form action="/course" method="get">
+          <button class="btn btn-dark float-right" type="submit">重設</button>
+        </form> -->
+        <div class="filter-content">
+          <div class="list-group list-group-flush">
+
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="category" value="技巧體操" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">技巧體操</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="category" value="健美體操" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">健美體操</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="category" value="競技體操" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">競技體操</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="category" value="普及體操" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">普及體操</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="category" value="藝術體操" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">藝術體操</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="category" value="彈網訓練" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">彈網訓練</span>
+            </div>
+
+          </div> <!-- list-group .// -->
+
+        </div>
+      </article> <!-- card-group-item.// -->
+
+      <article class="card-group-item">
+        <header class="side-heading2"><span class="reflect">等級 </span></header>
+        <div class="filter-content">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="level" value="L1" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">第一級</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="level" value="L2" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">第二級</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="level" value="L3" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">第三級</span>
+            </div>
+          </div> <!-- card-body.// -->
+        </div>
+      </article> <!-- card-group-item.// -->
+
+      <article class="card-group-item">
+        <header class="side-heading2"><span class="reflect">地區</span></header>
+        <div class="filter-content">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="region" value="香港島" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">香港島</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="region" value="九龍" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">九龍</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="region" value="新界" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">新界</span>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="region" value="離島" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">離島</span>
+            </div>
+          </div> <!-- card-body.// -->
+        </div>
+      </article> <!-- card-group-item.// -->
+
+      <article class="card-group-item">
+        <header class="side-heading2"><span class="reflect">星期</span></header>
+        <div class="filter-content">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item">
+              <div style="float: left;">
+                <input class="" type="checkbox" name="weekday" value="一" onclick="fetchPage(name,value,2,1)">
+                <span class="form-check-label">星期一</span>
+              </div>
+              <div style="float: right;">
+                <input class="" type="checkbox" name="weekday" value="二" onclick="fetchPage(name,value,2,1)">
+                <span class="form-check-label">星期二</span>
+              </div>
+
+            </div>
+            <div class="list-group-item">
+              <div style="float: left;">
+                <input class="" type="checkbox" name="weekday" value="三" onclick="fetchPage(name,value,2,1)">
+                <span class="form-check-label">星期三</span>
+              </div>
+              <div style="float: right;">
+                <input class="" type="checkbox" name="weekday" value="四" onclick="fetchPage(name,value,2,1)">
+                <span class="form-check-label">星期四</span>
+              </div>
+            </div>
+            <div class="list-group-item">
+              <div style="float: left;">
+                <input class="" type="checkbox" name="weekday" value="五" onclick="fetchPage(name,value,2,1)">
+                <span class="form-check-label">星期五</span>
+              </div>
+              <div style="float: right;">
+                <input class="" type="checkbox" name="weekday" value="六" onclick="fetchPage(name,value,2,1)">
+                <span class="form-check-label">星期六</span>
+              </div>
+            </div>
+            <div class="list-group-item">
+              <input class="" type="checkbox" name="weekday" value="日" onclick="fetchPage(name,value,2,1)">
+              <span class="form-check-label">星期日</span>
+            </div>
+          </div> <!-- card-body.// -->
+        </div>
+      </article> <!-- card-group-item.// -->
+
+    </div> <!-- card.// -->
+    <!-- <ul class="list-unstyled">
+        <li><a class="side-button1 <%= req.path.startsWith('/admin/news') ? 'active':'' %>" href="/admin/news">搜尋條件</a>
+        </li>
+        <li><a class="side-button1 <%= req.path.startsWith('/admin/email') ? 'active':'' %>" href="/admin/email">電郵內文</a>
+        </li>
+        <li><a class="side-button1 <%= req.path.startsWith('/admin/user') ? 'active':'' %>" href="/admin/user">用戶管理</a>
+        </li>
+  
+        <li>
+          <a type="button" class="side-button1" onclick="showList('applyCat')">項目</a>
+          <div class="dropdown-content" id="applyCat">
+            <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/acroSearch">技巧體操公開賽</a>
+            <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/gfaSearch">普及體操節</a>
+            <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/trampolineSearch">彈網分齡賽(雙人同步)</a>
+            <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/HKRGASearch">藝術體操分齡賽</a>
+            <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/clubMemberSearch">團體註冊申請</a>
+          </div>
+        </li>
+        <li>
+            <a type="button" class="side-button1" onclick="showList('applyLevel')">Level</a>
+            <div class="dropdown-content" id="applyLevel">
+              <input type="checkbox" name="level" value="1">Level 1</a>
+              <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/gfaSearch">Level 2</a>
+              <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/HKRGASearch">Level 3</a>
+            </div>
+          </li>
+          <li>
+            <a type="button" class="side-button1" onclick="showList('applyArea')">area</a>
+            <div class="dropdown-content" id="applyArea">
+              <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/acroSearch">技巧體操公開賽</a>
+              <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/gfaSearch">普及體操節</a>
+              <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/trampolineSearch">彈網分齡賽(雙人同步)</a>
+              <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/HKRGASearch">藝術體操分齡賽</a>
+              <a class="side-button1 <%= req.path.startsWith('/admin/applyHandle') ? 'active':'' %>" href="/admin/applyHandle/clubMemberSearch">團體註冊申請</a>
+            </div>
+          </li>
+  
+      </ul> -->
+  </section>
+</aside>
+
+<script>
+  function showList(list) {
+    document.getElementById(list).classList.toggle("show");
+  }
+</script>
+<script>
+  async function reset() {
+    fetchPage("", "", 2, 1);
+    
+    options.forEach(function(elem){
+      var checkboxes = document.getElementsByName(elem);
+      for (var checkbox of checkboxes) {
+            checkbox.checked = false;
+        }
+    });
+  }
+</script>
