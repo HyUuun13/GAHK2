@@ -1,0 +1,430 @@
+<div id="body" class="flex-column d-lg-flex flex-lg-row">
+    <style>
+      #form-register button[type="submit"].confirm:before {
+        content: '確定'
+      }
+  
+      #form-register input[readonly] {
+        border: 1px solid #fff;
+        border-bottom: 1px solid #000;
+        padding-left: .75rem;
+        padding-right: .75rem
+      }
+    </style>
+    <aside class="user">
+      <section>
+        <h6 class="side-heading3"><span class="reflect" data-text="成為用戶">課程報名</span></h6>
+      </section>
+    </aside>
+  
+    <div class="content w-100">
+      <h5 class="main-heading1">編輯<span class="highlight">報名</span></h5>
+      <form onsubmit="submitForm(this);return false" action="/admin/application/<%= req.params.id %>/edit" method="POST">
+        <section>
+          <h6 class="side-heading2 col-12">課程資料</h6>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12 col-lg-4 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 10px;">報名項目</label>
+                <input class="form-control" type="text" name="category" id="category" value="<%= applycourse.category %>"
+                  disabled>
+              </div>
+              <div class="col-12 col-lg-4 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 10px;">課程編號</label>
+                <input class="form-control" type="text" name="courseID" id="courseID" value="<%= applycourse.courseID %>"
+                  disabled>
+              </div>
+              <div class="col-12 col-lg-4 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 10px;">課程級別</label>
+                <input class="form-control" type="text" name="level" id="level" value="<%= applycourse.level %>" disabled>
+              </div>
+              
+  
+              <h6 class="side-heading2 col-12">個人資料</h6>
+  
+              <div class="col-12 col-lg-6 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 10px;">姓名（中文）</label>
+                <input class="form-control" type="text" name="User[ChiName]" value="<%= curruser.ChiName %>" disabled>
+              </div>
+              <div class="col-12 col-lg-6 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 10px;">姓名（英文）</label>
+                <input class="form-control" type="text" name="User[EngName]" value="<%= curruser.EngName %>" disabled>
+              </div>
+  
+              <div class="col-12 col-lg-2 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 10px;">性別</label>
+                <input class="form-control" type="text" name="gender" id="gender" value="<%= curruser.Gender %>" disabled>
+              </div>
+  
+              <div class="col-12 col-lg-1 form-group d-flex"></div>
+              <%
+      let dob = new Date(curruser.Date);
+      let age = Math.floor((new Date() - dob) / (3600*24*365*1000));
+      %>
+              <div class="col-12 col-lg-2 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 8px;">年齡</label>
+                <input class="form-control" type="number" name="age" id="age" size="4" value="<%= age %>" disabled>
+              </div>
+              <%
+      let dateString = `${dob.getFullYear()}-${dob.getMonth() < 9 ? '0':''}${dob.getMonth()+1}-${dob.getDate() < 10 ? '0':''}${dob.getDate()}`;
+      %>
+              <div class="col-12 col-lg-1 form-group d-flex"></div>
+              <div class="col-12 col-lg-5 form-group d-flex">
+                <label class="flex-shrink-0 col-form-label" style="margin-right: 10px;">出生日期</label>
+                <input class="form-control" type="date" name="dob" id="dob" value="<%= dateString %>" disabled>
+              </div>
+  
+              <!--Need to be changed-->
+  
+              <!--Need to be changed-->
+              <% if (applycourse.category == "普及體操") { %>
+  
+              <h6 class="side-heading2 col-12">家長個人資料</h6>
+
+              <div class="col-12 form-group required">
+                <label class="flex-shrink-0 col-form-label">家長是否己有帳戶</label>
+                <input class="choices exist" id="hasAC" type="radio" name="parent" required value="<%= application.parent %>" onclick="hide()">是
+                <input class="choices exist" id="noAC" type="radio" name="parent" required value="<%= application.parent %>" onclick="show()">否
+              </div>
+              <div id="pEmail" class="col-12 form-group d-flex required">
+                <label class="flex-shrink-0 col-form-label">請輸入註冊電郵地址</label>
+                <input class="form-control parent1 fields" type="email" name="ParentAc" value="<%= application.ParentAc %>">
+              </div>
+              
+              <div id="pNoAC" class="container" style="display: none;">
+                <div class="row">
+                  <div class="col-12 form-group">
+                    <label class="flex-shrink-0 col-form-label">如沒有帳戶請填寫以下資料︰</label>
+                  </div>
+                  <div class="col-12 col-lg-6 form-group d-flex required">
+                    <label class="flex-shrink-0 col-form-label">姓名（中文）</label>
+                    <input class="form-control parent fields" type="text" name="chiNameParent" value="<%= application.chiNameParent %>">
+                  </div>
+                  <div class="col-12 col-lg-6 form-group d-flex required">
+                    <label class="flex-shrink-0 col-form-label">姓名（英文）</label>
+                    <input class="form-control parent fields" type="text" name="engNameParent" value="<%= application.engNameParent %>">
+                  </div>
+
+                  <div class="col-12 col-lg-3 form-group required">
+                    <label class="flex-shrink-0 col-form-label">性別</label>
+                    <input class="parent2 choices" id="genderp1" type="radio" name="GenderParent" value="<%= application.GenderParent %>" >男
+                    <input class="parent2 choices" id="genderp2" type="radio" name="GenderParent" value="<%= application.GenderParent %>" >女
+                  </div>
+                  <div class="col-12 col-lg-3 form-group d-flex">
+                    <label class="flex-shrink-0 col-form-label" style="margin-right: 8px;">年齡</label>
+                    <input class="form-control parent" id="agep" type="number" name="AgeParent" size="2" disabled>
+                  </div>
+                  <% let today = new Date();
+                  let maxdate = `${today.getFullYear()}-${today.getMonth() < 9 ? '0':''}${today.getMonth()+1}-${dob.getDate() < 10 ? '0':''}${today.getDate()}`;
+                  %>
+                  <div class="col-12 col-lg-6 form-group d-flex required">
+                    <label class="flex-shrink-0 col-form-label">出生日期</label>
+                    <input class="form-control parent fields" id="dobp" type="date" name="DOBParent" value="<%= application.DOBParent %>" oninput="calAge()" max="<%= maxdate %>" min="1980-01-01">
+                  </div>
+                  <div class="col-12 col-lg-6 form-group d-flex required">
+                    <label class="flex-shrink-0 col-form-label">聯絡電話</label>
+                    <input class="form-control parent fields" type="tel" name="PhoneParent" value="<%= application.PhoneParent %>" size="8" maxlength="8">
+                  </div>
+                  <div class="col-12 col-lg-6 form-group d-flex required">
+                    <label class="flex-shrink-0 col-form-label">電郵</label>
+                    <input class="form-control parent fields" type="email" name="EmailParent" value="<%= application.EmailParent %>" >
+                  </div>
+                </div>
+              </div>
+  
+              <% } %>
+              <h6 class="side-heading2 col-12">緊急聯絡人資料</h6>
+              <div class="col-12 col-lg-6 form-group d-flex required">
+                <label class="flex-shrink-0 col-form-label">姓名（中文）</label>
+                <input class="form-control fields" type="text" name="chiNameEmer" value="<%= application.chiNameEmer %>" required>
+              </div>
+              <div class="col-12 col-lg-6 form-group d-flex required">
+                <label class="flex-shrink-0 col-form-label">電話</label>
+                <input class="form-control fields" type="tel" name="PhoneEmer" value="<%= application.PhoneEmer %>" size="8" maxlength="8" required>
+              </div>
+  
+              <div class="col-12 form-group d-flex required">
+                <label class="flex-shrink-0 col-form-label">通訊地址</label>
+                <input class="form-control fields" type="text" name="AddressEmer" value="<%= application.AddressEmer %>" required>
+              </div>
+  
+              <h6 class="side-heading2 col-12">付款資料</h6>
+
+              <div class="col-12 col-lg-12 form-group required">
+                <label class="flex-shrink-0 col-form-label">繳費方式</label>
+                <input class="choices" id="pay" type="radio" name="payment" value="<%= application.payment %>" required style="margin-left:20px;">支票(郵寄)
+                <input class="choices" id="pay1" type="radio" name="payment" value="<%= application.payment %>" required style="margin-left:30px;">現金(親身遞交)
+              </div>
+  
+              <!-- <h5 class="side-heading2 col-12">聲明</h5>
+  
+              <div class=" col-12 form-group required">
+                <label class="flex-shrink-0 col-form-label">你是否已年滿18歲</label>
+                <input class="choices" id="adult" type="radio" name="adult" required value="<%= application.adult %>" style="margin-left:30px;" >未滿18歲由家長填寫
+                <input class="choices" id="adult1" type="radio" name="adult" required value="<%= application.adult %>" style="margin-left:30px;">已滿18歲自行填寫
+              </div>
+  
+              <% let check1 = false; %>
+              <% if(application.declare1 == 'true') {
+                  check1 = true;
+              } %>
+
+              <div class=" col-12 form-group required">
+                <label
+                  class="flex-shrink-0 col-form-label">謹證明本人是自願參加此課程，並願意自行承擔所有責任。本人亦謹遵守貴會之一切規則、決定，包括藥物檢查條例。本人、本人之繼承人、本人之遺囑執行人及本人之管理人謹此豁免中國香港體操總會、所有贊助商、支持是項活動之團體及任何有關之團體對於本人因參加是項比賽或課程而由任何原因，包括疏忽，所引致之疾病、死亡、個人損失之任何法律責任，以及放棄任何有關之權利、索償及追究行動。本人亦同時聲明本人身體狀況良好及具備足夠之體能及技術完成賽事。本人願意授權大會及傳媒在無須本人審查而可以使用本人的肖像、姓名、聲線及個人資料作為活動籌辦及推廣之用。-
+                  本人已細閱及明瞭[附件一]之體能及健康須知，並同時聲明本人/敝子女身體狀況良好及具備足夠之體能及技術完成賽事或訓練課程。 
+                  </label>
+                  <input class="choices" id="agree" type="checkbox" name="declare1" value="true" checked="<%= check1 %>" required>同意
+              </div>
+
+              <% let check = false; %>
+              <% if(application.declare == 'true') {
+                  check = true;
+              } %>
+
+              <div class="col-12 col-lg-7 form-group required">
+                <label class="flex-shrink-0 col-form-label">請確保所填寫的資料均屬正確。</label>
+                <input class="choices" id="data" type="checkbox" name="declare" value="true" checked="<%= check %>" required >正確
+              </div> -->
+  
+              <div class="col-12 col-lg-5 form-group">
+                <a class="btn btn-dark" href="/admin/course/<%= applycourse.id %>/applicant">返回</a>
+              </div>
+              <div class="col-12 col-lg-7 form-group" style="text-align: right;">
+                <label><small><span style="color:red">＊</span>為必需填寫</small></label>
+                <button id="submit" class="btn btn-primary" onclick="gotoTop()" type="submit">更新</button>
+                <button id="cancel" class="btn btn-primary" type="button" hidden onclick="allowChange()">取消</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </form>
+    </div>
+</div>
+  
+<script>
+    var preview = true;
+    var category = document.getElementById("category").value;
+
+    load();
+    
+    if(category == "普及體操"){
+      load2();
+      calAge();
+    }
+
+    function load(){
+      var j = document.getElementById("pay").value;
+      //var k = document.getElementById("adult").value;
+      if(j == "cheque") {
+        document.getElementById("pay").checked = true;
+        document.getElementById("pay1").value = "cash";
+      } else {
+        document.getElementById("pay1").checked = true;
+        document.getElementById("pay").value = "cheque";
+      }
+
+      // if(k == "false") {
+      //   document.getElementById("adult").checked = true;
+      //   document.getElementById("adult1").value = true;
+      // } else {
+      //   document.getElementById("adult1").checked = true;
+      //   document.getElementById("adult").value = false;
+      // }
+    }
+
+
+    function load2() {
+      var i = document.getElementById("hasAC").value;
+      var k = document.getElementById("genderp1");
+      var l = document.getElementById("genderp2");
+
+      if (i == "true") {
+        document.getElementById("hasAC").checked = true;
+        document.getElementById("noAC").value = false;
+        hide();
+        k.value = "男";
+        l.value = "女";
+      } else {
+        document.getElementById("noAC").checked = true;
+        document.getElementById("hasAC").value = true;
+        if (k.value == "男") {
+            k.checked = true;
+            l.value = "女";
+        } else if (k.value == "女") {
+          l.checked = true;
+          k.value = "男";
+        }
+        show();
+      }
+    }
+ 
+    function gotoTop() {
+      document.body.scrollTop = 462;
+      document.documentElement.scrollTop = 462;
+    }
+
+    function calAge() {
+        var dobParent = '"' + document.getElementById("dobp").value + '"';
+        var ageParent = document.getElementById("agep");
+        ageParent.value = Math.floor((new Date() - new Date(dobParent)) / (3600*24*365*1000));
+    }
+  
+    function show() {
+      var noAc = document.getElementById("noAC");
+      var show = document.getElementById("pNoAC");
+      if (noAc.checked) {
+        parent();
+        show.style.display = "block";
+        document.getElementById("pEmail").style.display = "none";
+        document.getElementById("pEmail").classList.remove("d-flex");
+      }
+    }
+
+    function hide() {
+      var hasAc = document.getElementById("hasAC");
+      var show = document.getElementById("pNoAC");
+      if (hasAc.checked) {
+        parent();
+        show.style.display = "none";
+        document.getElementById("pEmail").style.display = "block";
+        document.getElementById("pEmail").classList.add("d-flex");
+      }
+    }
+  
+    function parent(){
+      var noAc = document.getElementById("noAC");
+      var hasAc = document.getElementById("hasAC");
+      var parent = document.getElementsByClassName("parent");
+      var parent1 = document.getElementsByClassName("parent1");
+      var parent2 = document.getElementsByClassName("parent2");
+      if (hasAc.checked) {
+          for (var i=0; i<parent.length;i++){
+            parent[i].removeAttribute("required");
+          }
+          for (var i =0; i<parent2.length; i++){
+            parent2[i].removeAttribute("required");
+          }
+          
+          var newattr = document.createAttribute("required");
+          newattr.value = "required"; 
+          parent1[0].setAttributeNode(newattr);
+      } else {
+          parent1[0].removeAttribute("required");
+          for (var i=0; i<parent.length;i++){
+            var newattr1 = document.createAttribute("required");
+            newattr1.value = "required"; 
+            parent[i].setAttributeNode(newattr1);
+          }
+          for (var i=0; i<parent2.length;i++){
+            var newattr1 = document.createAttribute("required");
+            newattr1.value = "required"; 
+            parent2[i].setAttributeNode(newattr1);
+          }
+      }
+    }
+
+    function parent1() {
+      var hasAc = document.getElementById("hasAC");
+      var parent = document.getElementsByClassName("parent");
+      var parent1 = document.getElementsByClassName("parent1");
+      var parent2 = document.getElementsByClassName("parent2");
+      var g1 = document.getElementById("genderp1");
+      var g2 = document.getElementById("genderp2");
+      if (hasAc.checked) {
+          for (var i=0; i<parent.length;i++){
+            parent[i].removeAttribute("required");
+            parent[i].value = "";
+          }
+          for (var i =0; i<parent2.length; i++){
+            parent2[i].removeAttribute("required");
+            parent2[i].removeAttribute("checked");
+            delete parent2[i].checked;
+          }
+          
+          var newattr = document.createAttribute("required");
+          newattr.value = "required"; 
+          parent1[0].setAttributeNode(newattr);
+      } else {
+          parent1[0].removeAttribute("required");
+          parent1[0].value = "";
+          for (var i=0; i<parent.length;i++){
+            var newattr1 = document.createAttribute("required");
+            newattr1.value = "required"; 
+            parent[i].setAttributeNode(newattr1);
+          }
+          for (var i=0; i<parent2.length;i++){
+            var newattr1 = document.createAttribute("required");
+            newattr1.value = "required"; 
+            parent2[i].setAttributeNode(newattr1);
+          }
+      }
+    }
+  
+    function allowChange(){
+      var inputsfield = document.getElementsByClassName('fields');
+      var inputschoices = document.getElementsByClassName('choices');
+      var cancel = document.getElementById('cancel');
+      for (var i=0; i<inputsfield.length;i++){
+        inputsfield[i].readOnly = false;
+      }
+      for (var i=0; i<inputschoices.length;i++){
+        inputschoices[i].disabled = false;
+      }
+      submit.innerHTML = "更新";
+      cancel.hidden = true;
+      preview = true;
+    }
+
+    async function submitForm(formElem) {
+  
+      var inputsfield = document.getElementsByClassName('fields');
+      var inputschoices = document.getElementsByClassName('choices');
+      var submit = document.getElementById('submit');
+      var cancel = document.getElementById('cancel');
+      if (preview) {
+        alert("請確認你輸入的資料是否正確。");
+        for (var i=0; i<inputsfield.length;i++){
+        inputsfield[i].readOnly = true;
+      }
+      for (var i=0; i<inputschoices.length;i++){
+        inputschoices[i].disabled = true;
+      }
+        submit.innerHTML = "確認提交";
+        cancel.hidden = false;
+        preview = false;
+        return;
+      }
+  
+      var inputschoices = document.getElementsByClassName('choices');
+      for (var i=0; i<inputschoices.length;i++){
+        inputschoices[i].disabled = false;
+      }
+
+
+      if(category == "普及體操") parent1();
+  
+      var response = await fetch(formElem.action, {
+              method: formElem.method,
+              body: new FormData(formElem),
+          });
+  
+          if (response.ok) {
+              alert("更新成功");
+              location.assign('/admin/course/<%= application.course %>/applicant');
+          } else if (response.status == 409) {
+  
+            var data = await response.json();
+            allowChange();
+              alert(data);
+  
+          } else {
+            allowChange();
+              alert(response.statusText);
+          }
+  
+  
+  
+    }
+
+</script>

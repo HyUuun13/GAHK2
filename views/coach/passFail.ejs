@@ -1,0 +1,202 @@
+<%- partial('./partial/sidemenu.ejs')%>
+<div class="content admin w-100">
+  <h5 class="main-heading1">
+    執教<span class="highlight">課程</span>
+    <a class="" href="/coach/uploadDoc/<%=course.id%>">
+      <button type="button" class="btn btn-warning btn-sm">上載文件</button>
+    </a>
+    
+  </h5>
+  <section class="section">
+    <h5>請先上載文件，才輸入學生成績。</h5>
+    <h6 class="main-heading2 mb-0">
+      <%=course.courseID%>
+    </h6>
+    <span id="search"></span>
+
+
+    <% if(course.category=="普及體操" ) {%>
+
+    <br>
+    <p class="h4">請按上方「上載文件」以上載課程點名紙。</p>
+
+    <%}else{%>
+
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr class="text-center">
+          <th class="px-2"><input id="selectAll" type="checkbox" onchange="selectAll(this)"></th>
+          <th>編號</th>
+          <th>姓名</th>
+          <th>手提電話</th>
+          <th>合格/不合格</th>
+          <th></th>
+
+        </tr>
+      </thead>
+      <tbody id="listing">
+        <!--Data-->
+        <% for (var i=0; i< results.length; i++){ var result=results[i]; %>
+        <tr class="text-center">
+          <td><input type="checkbox" name="thischeckbox" value="<%= result.id %>"></td>
+          <td>
+            <%= result.id %>
+          </td>
+          <td>
+            <%= result.resultOwner.ChiName %><br />
+            <%= result.resultOwner.EngName %>
+          </td>
+          <td>
+            <%= result.resultOwner.Mobile ? result.resultOwner.Mobile : 'N/A' %>
+          </td>
+          <td>
+            <%= result.passFail %>
+          </td>
+          <!-- <td>
+                      <fieldset class="form-group">
+                        <div class="row justify-content-center">
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PassFail" id="pass" value="pass" checked>
+                            <label class="form-check-label" for="gridRadios1">
+                              合格
+                            </label>
+                          </div>
+
+                          &nbsp;
+
+
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="PassFail" id="fail" value="fail">
+                            <label class="form-check-label" for="gridRadios2">
+                              不合格
+                            </label>
+                          </div>
+
+                        </div>
+                      </fieldset>
+                    </td> -->
+        </tr>
+        <% }; %>
+
+      </tbody>
+    </table>
+    <%}%>
+          <div class="float-left my-2 mx-4">
+            <a class="" href="/coach/endCourseList">
+              <button type="button" class="btn btn-secondary">返回</button>
+            </a>
+          </div>
+          <% if(course.category=="普及體操" ) {%>
+    <%}else{%>
+    <% if(course.docStatus==0 ) {%>
+    <div class="float-right my-2 mx-5">
+      <button type="button" class="btn btn-success disabled" onclick="notupload(1)">合格</button>
+      <button type="button" class="btn btn-danger disabled" onclick="notupload(2)">不合格</button>
+    </div>
+    <%}else{%>
+    <div class="float-right my-2 mx-5">
+      <button type="button" class="btn btn-success" onclick="fetchPage(1)">合格</button>
+      <button type="button" class="btn btn-danger" onclick="fetchPage(2)">不合格</button>
+    </div>
+    <% }; %>
+    <% }; %>
+  </section>
+
+  <!-- <br><br>
+    <button type="button" class="btn btn-success float-right" onsubmit="submitForm(result); return false">儲存</button> -->
+
+
+
+</div>
+
+
+<script>
+  function selectAll(source) {
+    var checkboxes = document.getElementsByName("thischeckbox");
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+      checkboxes[i].checked = source.checked;
+    }
+  }
+</script>
+
+<script>
+  async function fetchPage(result) {
+    var checkboxes = document.getElementsByName("thischeckbox");
+    var checkboxesChecked = [];
+    // loop over them all
+    for (var i = 0; i < checkboxes.length; i++) {
+      // And stick the checked ones onto an array...
+      if (checkboxes[i].checked) {
+        checkboxesChecked.push({
+          resultID: checkboxes[i].value,
+          passFail: result
+        });
+      }
+    }
+    // var confirmContinue = true;
+
+    // if (checkboxesChecked.length > remainPlace) {
+    //   confirmContinue = confirm("你所錄取的人數比剩下的名額多，如選擇確定將會把未能錄取的人加到候補名單");
+    // }
+
+    // if (confirmContinue) {
+    var response = await fetch('coach/passFail/<%= course.id %>', {
+      method: 'POST', // or 'PUT'
+      body: JSON.stringify(checkboxesChecked), // data can be `string` or {object}!
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    });
+    if (response.ok) {
+      if (!alert('更新成功')) { window.location.reload(); }
+    } else {
+      // console.log(response);
+      res = await response.json();
+      if (!alert(res)) { window.location.reload(); }
+    }
+  }
+      // console.log(JSON.stringify(checkboxesChecked));
+
+    // }
+
+</script>
+
+
+
+
+<script>
+  async function notupload(result) {
+
+    var response = confirm("請先上載檔案!");
+    if (response){
+      location.assign("/coach/uploadDoc/<%=course.id%>");
+    }
+
+  }
+
+</script>
+
+
+
+
+<script>
+
+  async function submitForm(formElem) {
+    //save data in a place by ajax
+    var response = await fetch(formElem.action, { //get the action link
+      method: formElem.method,
+      body: new FormData(formElem),
+    });
+
+    if (response.ok) {
+      var ans = await response.json();
+    } else if (response.status == 401) {
+      var msg = await response.json();
+      alert(msg);
+    } else {
+      alert(response.statusText);
+    }
+
+  };
+
+</script>

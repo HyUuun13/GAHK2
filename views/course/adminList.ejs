@@ -1,0 +1,58 @@
+<%- partial('../admin/partial/sidemenu.ejs') %>
+<div class="content admin w-100">
+    <h5 class="main-heading1">
+      課程管理<span class="highlight">系統</span>
+      <a class="btn btn-primary btn-sm" href="/course/create">新增課程</a>
+    </h5>
+    <section class="section">
+        <h6 class="main-heading2 mb-0">搜索及管理課程</h6>
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                        <th>編號</th>
+                        <th>名稱</th>
+                        <th>日期</th>
+                        <th></th>
+                        
+                </tr>
+            </thead>
+            <tbody>
+                <% courses.forEach( function(course) { %>
+    
+                <tr>
+                    <td><%= course.courseID %></td>
+                    <td><%= course.category %> (<%= course.level %>)</td>
+                    <td><%= course.startDate %>至<%= course.endDate %></td>
+                    <td class="action">
+                        <a class="btn btn-primary" href="/course/update/<%=course.id%>">編輯</a>
+                        <button type="button" class="btn btn-danger ajax-with-confirm" onclick="deleteCourse('<%= course.id %>')">刪除</button>
+                      </td>
+                </tr>
+    
+                <% }); %>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<script>
+    async function deleteCourse(id) {
+        var r = confirm("Confirm Delete?");
+        
+        if (r) {
+            var response = await fetch("/course/" + id, {
+                method: "DELETE"
+            });
+
+            if (response.ok) {
+                alert("Course deleted.")
+                location.assign("/");
+            } else {
+                alert(response.status + ": " + response.statusText);
+            }
+
+        } else {
+            alert("cancelled");
+        }
+    };
+</script>

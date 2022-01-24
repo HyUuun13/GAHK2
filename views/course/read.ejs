@@ -1,0 +1,143 @@
+<div class="content admin w-100">
+    <h5 class="main-heading1">訓練<span class="highlight">班</span></h5>
+    <section>
+        <h6 class="main-heading2 mb-0">課程詳情</h6>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <div>
+                        <p><span style="font-weight: bold;">項目︰</span>
+                            <%= course.category %>
+                        </p>
+                        <p><span style="font-weight: bold;">課程編號（難度）︰</span>
+                            <%= course.courseID %> (<%= course.level %>)
+                        </p>
+                        <p><span style="font-weight: bold;">日期︰</span>
+                            <%= course.startDate.split("-")[0] %>年<%= course.startDate.split("-")[1] %>月<%=
+                                        course.startDate.split("-")[2] %>日
+                                        <% if (course.endDate) { %>
+                                            –<%= course.endDate.split("-")[0] %>年<%= course.endDate.split("-")[1] %>月<%=
+                                                        course.endDate.split("-")[2] %>日
+                                                        <% } %>
+                                                            <% if (course.weekday) { %>
+                                                                ，逢星期<%= course.weekday %>
+                                                                    <% } %>
+                        </p>
+                        <% if (course.dates) { %>
+                            <p><span style="font-weight: bold;">所有上課日期︰</span>
+                                <%= course.dates %>
+                            </p>
+                            <% } %>
+                                <p><span style="font-weight: bold;">時間︰</span>
+                                    <%= course.time %>
+                                </p>
+                                <p><span style="font-weight: bold;">地點:
+                                    </span>
+                                    <%= course.stadium %>-<%= course.space %><br>
+                                            <%= course.address %>
+                                </p>
+                                <p><span style="font-weight: bold;">教練: </span>
+                                    <% if (course.coach[0]) { %>
+                                    <%= course.coach[0].ChiName %>
+                                    <% } else { %>
+                                        待定
+                                    <% } %>
+                                </p>
+                                <p><span style="font-weight: bold;">費用: </span>$<%= course.fee %>
+                                </p>
+                                <% if (course.minAge || course.maxAge) { %>
+                                    <p><span style="font-weight: bold;">年齡: </span>
+                                        <% if (course.minAge && !course.maxAge) { %>
+                                            大於<%= course.minAge %>歲
+                                                <% } else if (!course.minAge && course.maxAge) { %>
+                                                    少於<%= course.maxAge %>歲
+                                                        <% } else { %>
+                                                            <%= course.minAge %>–<%= course.maxAge %>歲
+                                                                    <% } %>
+                                    </p>
+                                    <% } %>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <% if (course.coord) { %>
+                        <iframe height="350" width="100%"
+                            src="https://leaflet-api.vercel.app?center=<%= course.coord %>&zoom=17&marker=<%= course.stadium %>|<%= course.coord %>&sensor=">
+                        </iframe>
+                        <% } %>
+                </div>
+            </div>
+            <% if (course.detail) { %>
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong>更多詳情: </strong><br />
+                            <%= course.detail %>
+                        </p>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+
+
+    </section>
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                
+                    <% if (course.status==0) {%>
+                        <% if (req.session.userId) {%>
+                            <div class="col-12 col-lg-2 form-group">
+                            <a><button id="submit" class="btn btn-primary"
+                                onclick="apply('<%=course.id%>','<%=course.status%>')">報名</button></a>
+
+                            <% } else {%>
+                                <div class="col-12 col-lg-5 form-group">
+                                <span>***請先<a href="/user/login?r=/course/<%= course.id %>/application">登入</a>方可進行網上報名***
+                                </span>
+                                <% } %>
+                                    <% } else if(course.status==2) {%>
+                                        <span class="p-2">已截止報名</span>
+                                        <% } %>
+                                            <a id="submit" class="btn btn-dark float-right" href="/course">返回</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // function goBack() {
+    //     window.history.back();
+    // }
+</script>
+<script>
+    async function apply(id, status) {
+        // console.log(id);
+        if (status == 1){
+            var continueApply = confirm("由於報名人數眾多，你的申請會被放到候選名單，是否繼續報名?");
+            if (!continueApply) {
+                location.reload();
+            }
+        }
+        var res = await fetch("/course/" + id + "/application", {
+            method: "GET"
+        });
+        if (res.ok) {
+            location.assign("/course/" + id + "/application");
+        } else {
+            var application = await res.json();
+            if (res.status == '403') {
+                alert(application);
+            } else if (res.status == '401') {
+                var r = confirm(application);
+                if (r) {
+                    location.assign('/user/login?r=/course/' + id);
+                } else {
+                    location.reload();
+                }
+            } else if ( res.status == 406) {
+                alert(application);
+            }
+        }
+    };
+</script>

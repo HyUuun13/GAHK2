@@ -1,0 +1,60 @@
+<%- partial('./partial/sidemenu.ejs')%>
+    <div class="content admin w-100">
+        <h5 class="main-heading1">
+            上載<span class="highlight">文件</span>
+        </h5>
+
+        <form action="/coach/upload/<%= course.id %>" method="post" onsubmit="submitForm(this); return false"
+            enctype="multipart/form-data" id="form">
+            <section class="section">
+                <h6 class="main-heading2 mb-0"><%= course.courseID %></h6>
+
+                <p><b>按「選擇檔案」以上載檔案:</b></p>
+
+                <div>點名紙:</div>
+                <input type="file" id="attendance" name="attendance">
+
+                <br><br>
+                <% if(course.category=="普及體操" ) {%>
+                    <!--Show Nothing-->
+                    <%}else{%>
+                        <div>分紙:</div>
+                        <input type="file" id="examResult" name="examResult">
+                        <%}%>
+            </section>
+
+            <br><br>
+            <a class="" onclick="history.back()">
+                <button type="button" class="btn btn-secondary">返回</button>
+            </a>
+            <button type="submit" class="btn btn-success float-right">儲存</button>
+
+        </form>
+
+
+    </div>
+
+
+
+    <script>
+
+        async function submitForm(formElem) {
+            //save data in a place by ajax
+            var response = await fetch(formElem.action, {
+                method: formElem.method,
+                body: new FormData(formElem),
+            });
+
+            if (response.ok) {
+                //var data = await response.json();
+                alert("你已成功上載檔案");
+                location.assign("/coach/passFail/<%= course.id %>");
+            } else if (response.status == 404) {
+                //var data = await response.json();
+                alert("你沒有上載全部檔案");
+            } else {
+                alert(response.statusText);
+            }
+
+        };
+    </script>

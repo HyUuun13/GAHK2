@@ -1,0 +1,172 @@
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    mark {
+        background-color: yellow;
+    }
+
+    #subjects {
+        background-color: #f5f5f5;
+    }
+
+    #btns {
+        padding: 8px;
+        text-align: right;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .fa-check {
+        color: green;
+    }
+
+    .fa-remove {
+        color: red;
+    }
+
+    #statusBtn {
+        width: 65pt;
+        font-size: small;
+        text-align: center;
+    }
+
+    /* delete button */
+    .modalBtn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        opacity: 0.9;
+    }
+
+    .modalBtn:hover {
+        opacity: 1;
+    }
+
+    .cancelbtn,
+    .deletebtn,
+    .confirmbtn {
+        float: left;
+        width: 50%;
+    }
+
+    .cancelbtn {
+        background-color: #ccc;
+        color: black;
+    }
+
+    .deletebtn {
+        background-color: #f44336;
+    }
+
+    .confirmbtn {
+        background-color: rgb(63, 63, 236);
+    }
+
+    .container {
+        padding: 16px;
+        text-align: center;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 3;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(8, 8, 8, 0.5);
+        padding-top: 50px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto 15% auto;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    hr {
+        border: 1px solid #f1f1f1;
+        margin-bottom: 25px;
+    }
+
+    .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    @media screen and (max-width: 300px) {
+
+        .cancelbtn,
+        .deletebtn .confirmbtn {
+            width: 100%;
+        }
+    }
+</style>                
+<%- partial('partial/sidemenu.ejs') %>
+
+<div class="content user w-100">
+    <h5 class="main-heading1">我的<span class="highlight">申請</span></h5>
+    <div class="container-fluid">
+        <table>
+            <tbody>
+                <tr id="application">
+                    <th >編號<br>Index</th>
+                    <th>項目<br>Category</th>
+                    <th>課程編號<br>Course No.</th>
+                    <th>課程級別<br>Course Level</th>
+                    <th>申請日期<br>Application Date<br>(YYYY-MM-DD)</th>
+                    <th>狀態<br>Status</th>
+                    <th>最後更新<br>Last Update</th>
+                </tr>
+
+                <% applylist.forEach( function(app) { %>
+                    <%
+                    let create = new Date(app.createdAt);
+                    let update = new Date(app.updatedAt);
+                    let dateString = `${create.getFullYear()}-${create.getMonth() < 9 ? '0':''}${create.getMonth()+1}-${create.getDate() < 10 ? '0':''}${create.getDate()}`;
+                    let dateString1 = `${update.getFullYear()}-${update.getMonth() < 9 ? '0':''}${update.getMonth()+1}-${update.getDate() < 10 ? '0':''}${update.getDate()}`;
+                    let dateString2 = `${update.getHours() < 10 ? '0':''}${update.getHours()}:${update.getMinutes() < 10 ? '0':''}${update.getMinutes()}:${update.getSeconds() < 10 ? '0':''}${update.getSeconds()}`;
+                    %>
+                    <tr>
+                        <td><%= app.id %></td>
+                        <% for(var i = 0; i < course.length; i++) { %>
+                            <% if(app.course == course[i].id) { %>
+                                <td style="white-space: nowrap;"><%= course[i].category %></td>
+                                <td><%= course[i].courseID%></td>
+                                <td><%= course[i].level %></td>
+                            <% } %>
+                        <% } %>
+                        <td><%= dateString %></td>
+                        <% switch (app.status) { 
+                            case 1: app.status="已錄取 Admit"; break; 
+                            case 2: app.status="已拒絕 Reject"; break; 
+                            case 3: app.status="候補名單 Waiting List"; break;
+                            case 4: app.status="已付款 Paid"; break; 
+                            default: app.status="待處理 Pending"; break; } 
+                        %>
+                        <td><%= app.status %></td>
+                        <td><%= dateString1 %><br><%= dateString2 %></td>
+                    </tr>
+
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>

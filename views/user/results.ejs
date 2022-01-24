@@ -1,0 +1,91 @@
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th,
+    td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+</style>                
+<%- partial('partial/sidemenu.ejs') %>
+
+<div class="content user w-100">
+    <h5 class="main-heading1">我的<span class="highlight">成績</span></h5>
+    <div class="container-fluid">
+        <table style="width: 100%;">
+            <tbody>
+                <tr id="application">
+                    <th >編號<br>Index</th>
+                    <th >項目<br>Category</th>
+                    <th >課程編號<br>Course No.</th>
+                    <th >級別<br>Level</th>
+                    <th >完成日期<br>Completion Date<br>(YYYY-MM-DD)</th>
+                    <th>教練<br>Coach</th>
+                    <th>成績<br>Result</th>
+                    <th>申請證書<br>Apply Certificate</th>
+                </tr>
+
+                <% applylist.forEach( function(app) { %>
+                    <tr>
+                        <td><%= app.id %></td>
+                        <% for(var i = 0; i < courselist.length; i++) { %>
+                            <% if(app.course == courselist[i].id) { %>
+                                <td style="white-space: nowrap;"><%= courselist[i].category %></td>
+                                <td><%= courselist[i].courseID%></td>
+                                <td><%= courselist[i].level %></td>
+                                <td><%= courselist[i].endDate %></td>
+                                <td style="white-space: nowrap;"><%= courselist[i].coach[0].ChiName %></td>
+                            <% } %>
+                        <% } %>
+                        <% for(var i = 0; i < result.length; i++) { %>
+                            <% if(app.course == result[i].course ) { %>
+                                <td>
+                                    <% let pf = result[i].passFail %>
+                                    <% if( result[i].isVerified) { %>
+                                        <% switch (pf) { 
+                                            case 1: pf="合格 Pass"; break;
+                                            case 2: pf="不合格 Fail"; break;
+                                            default: pf="N/A"; break; } %>
+                                        <%= pf %>
+                                    <% } else { %>
+                                         N/A
+                                    <% } %>
+                                </td>
+                                    <% if(result[i].passFail == 1 && result[i].isVerified && !result[i].cert) { %>
+                                        <td><form class="d-inline" onsubmit="submitForm(this);return false" action="/user/applyCert/<%= result[i].id %>" method="POST">
+                                            <button class="btn btn-primary">申請證書</button>
+                                        </form></td>
+                                    <% } else if(result[i].cert) { %> 
+                                        <td>已申請</td>
+                                    <% } else { %>
+                                        <td>N/A</td>
+                                    <% } %>
+                            <% } %>
+                        <% } %>
+
+                    </tr>
+
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    async function submitForm(formElem) {
+        var response = await fetch(formElem.action, {
+            method: formElem.method,
+            body: new FormData(formElem),
+        });
+
+        if (response.ok) {
+            alert("成功提交申請");
+            location.assign("/user/results");
+        } else {
+            alert(response.statusText);
+        }
+    }
+</script>

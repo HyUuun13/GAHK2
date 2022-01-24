@@ -1,0 +1,237 @@
+<body onload="getQuery()">
+    <%- partial('partial/sidemenu.ejs') %>
+        <div class="content admin w-100">
+            <h5 class="main-heading1">
+                訓練<span class="highlight">班</span>
+
+            </h5>
+            <section class="section">
+                <h6 class="main-heading2 mb-0">搜索課程</h6>
+                <span id="search"></span>
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>名稱</th>
+                            <th>體育館</th>
+                            <th>星期</th>
+                            <th>時間</th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="listing">
+                        <% courses.forEach( function(course) { %>
+
+                            <tr>
+                                <td><a href="/course/<%= course.id%>">
+                                        <%= course.category %> (<%= course.courseID%> (<%= course.level %>))
+                                    </a>
+                                </td>
+                                <td>
+                                    <%= course.stadium %>
+                                </td>
+                                <td>逢星期<%= course.weekday %>
+                                </td>
+                                <td>
+                                    <%= course.time %>
+                                </td>
+                                <td class="action">
+                                    <a class="btn btn-primary" id="detail" href="/course/<%=course.id%>">詳情</a>
+                                    <% if (course.status==2){ %>
+                                        <span>己截止</span>
+
+                                        <% } else { %>
+                                            <a class="btn btn-success"
+                                                onclick="apply('<%=course.id%>','<%=course.status%>')" a
+                                                href="javascript:void(0)">報名</a>
+                                            <% } %>
+                                </td>
+                            </tr>
+
+                            <% }); %>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+</body>
+<script>
+    async function apply(id, status) {
+        // console.log(id);
+        if (status == 1) {
+            var continueApply = confirm("由於報名人數眾多，你的申請會被放到候選名單，是否繼續報名?");
+            if (!continueApply) {
+                location.reload();
+            }
+        }
+        var res = await fetch("/course/" + id + "/application", {
+            method: "GET"
+        });
+        // var res2 = await fetch("/user/owners", {
+        //     method: "GET"
+        // });
+        // console.log(res);
+        // console.log(application);
+        // var user = await res2.json();
+        if (res.ok) {
+            location.assign("/course/" + id + "/application");
+        } else {
+            var application = await res.json();
+            if (res.status == '403') {
+                alert(application);
+            } else if (res.status == '401') {
+                var r = confirm(application);
+                if (r) {
+                    location.assign('/user/login?r=/course/' + id);
+                } else {
+                    location.reload();
+                }
+            } else if ( res.status == 406) {
+                alert(application);
+            }
+
+        }
+    };
+</script>
+
+<!-- <script>
+    function setPagination(limit, offset) {
+        var previousButton = document.getElementById("previousButton");
+        var nextButton = document.getElementById("nextButton");
+        var currentLink = document.getElementById("currentLink");
+        var previousLink = document.getElementById("previousLink");
+        var nextLink = document.getElementById("nextLink");
+        var firstLink = document.getElementById("firstLink");
+        var lastLink = document.getElementById("lastLink");
+        var numOfRecords = parseInt("0");
+        var submitButton = document.getElementById("submitButton");
+        //var limit = Math.max(parseInt("<%= req.query.limit %>"), 2) || 2;
+        //var offset = Math.max(parseInt("<%= req.query.offset %>"), 0) || 0;
+        var where = "region=<%= req.query.region %>&maxCoins=<%= req.query.maxCoins %>&minCoins=<%= req.query.minCoins %>&validOn=<%= req.query.validOn %>";
+        //var baseUrl = "/coupon/search?"+ where +"&p?limit=" + limit + "&offset=";
+        //firstLink.href = baseUrl + 0;
+        //previousButton.href = baseUrl + (offset - limit);
+        //previousLink.href = baseUrl + (offset - limit);
+        //currentLink.href = baseUrl + offset;
+        //nextLink.href = baseUrl + (offset + limit);
+        //nextButton.href = baseUrl + (offset + limit);
+        //lastLink.href = baseUrl + (Math.ceil(numOfRecords / limit) - 1) * limit;
+        firstLink.onclick = function () { fetchPage(where, limit, 0) };
+        previousButton.onclick = function () { fetchPage(where, limit, offset - limit) };
+        previousLink.onclick = function () { fetchPage(where, limit, offset - limit) };
+        currentLink.onclick = function () { fetchPage(where, limit, offset) };
+        nextLink.onclick = function () { fetchPage(where, limit, offset + limit) };
+        nextButton.onclick = function () { fetchPage(where, limit, offset + limit) };
+        lastLink.onclick = function () { fetchPage(where, limit, (Math.ceil(numOfRecords / limit) - 1) * limit) };
+        submitButton.onclick = function () { fetchPage(where, limit, 0) };
+        var currentPageNumber = Math.floor(offset / limit) + 1;
+        previousLink.innerHTML = currentPageNumber - 1;
+        currentLink.innerHTML = currentPageNumber;
+        nextLink.innerHTML = currentPageNumber + 1;
+        lastLink.innerHTML = Math.ceil(numOfRecords / limit);
+        if (offset < limit) {
+            previousButton.setAttribute("disabled", true);
+            //previousButton.href = "";
+            previousLink.style.display = "none";
+        } else {
+            previousButton.removeAttribute("disabled");
+            previousLink.style.display = "block";
+        }
+        if (offset + limit >= numOfRecords) {
+            nextButton.setAttribute("disabled", true);
+            //nextButton.href = "";
+            nextLink.style.display = "none";
+        } else {
+            nextButton.removeAttribute("disabled");
+            nextLink.style.display = "block";
+        }
+    }
+    //previousButton.onload = function () { fetchPage(where, limit, offset) };
+</script> -->
+
+<script>
+    var query = "";
+    var options = ["category", "level", "weekday", "region"];
+    function getQuery() {
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        options.forEach(function (option) {
+            var criterias = url.searchParams.getAll(option);
+            var checkboxes = document.getElementsByName(option);
+            criterias.forEach(function (criteria) {
+                query += option + "=" + criteria + "&";
+                checkboxes.forEach(function (checkbox) {
+                    if (checkbox.value == criteria) {
+                        // console.log(query);
+                        checkbox.checked = true;
+                    }
+                });
+            });
+        });
+    }
+
+    async function fetchPage(type, where, limit, offset) {
+        // console.log(query);
+        if (type && where) {
+            if (query.includes(where)) {
+                //console.log("where" + where);
+                query = query.replace(type + "=" + where + "&", "");
+            } else {
+                query += type + "=" + where;
+                query += "&";
+            }
+
+            // }
+            // if (type == "level"){
+            //     query+=type+"="+where;
+            // }
+
+            // var where = "category=<%= req.query.category %>&level=<%= req.query.level %>";
+            // var response = await fetch("/course?" + where + "&limit=" + limit + "&offset=" + offset);
+            var response = await fetch("/course?" + query);
+        } else {
+            var response = await fetch("/course");
+            query = "";
+        }
+
+
+        if (response.ok) {
+            //console.log(response);
+            //setPagination(limit, offset);
+            var courses = await response.json();
+            //console.log(courses);
+            var dynamicCode = '';
+            courses.forEach(function (course) {
+                dynamicCode +=
+                    '<tr>' +
+                    '<td><a href="/course/' + course.id + '">' + course.category + '(' + course.courseID + '(' + course.level + '))</a></td>' +
+                    '<td>' + course.stadium + '</td>' +
+                    '<td>逢星期' + course.weekday + '</td>' +
+                    '<td>' + course.time + '</td>' +
+                    '<td class="action">' +
+                    '<a class="btn btn-primary" href="/course/' + course.id + '">詳情</a>';
+                if (course.status == 2) {
+                    dynamicCode += '<span>己截止</span>';
+
+                } else {
+                    dynamicCode += '<a class="btn btn-success" onclick="apply(\'' + course.id + '\', ' + course.status + ')" href="javascript:void(0)">報名</a>';
+                }
+
+                // if (session.userId) {
+                //dynamicCode += '<button class="btn btn-primary" onclick="apply(' + course.id + ')"/application">報名</button>';
+                // } else {
+                // dynamicCode += '<a class="btn btn-primary" href="/user/login">登入以報名</a>';
+                // }
+                dynamicCode += '</td>' +
+                    '</tr>';
+                window.history.pushState(null, null, "/course?" + query);
+            });
+            //console.log(dynamicCode);
+
+            document.querySelector("#listing").innerHTML = dynamicCode;
+
+        } else {
+            alert(response.status + ": " + response.statusText);
+        }
+
+    };
+</script>

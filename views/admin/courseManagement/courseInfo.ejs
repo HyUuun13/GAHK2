@@ -1,0 +1,276 @@
+<!--courseInfo.ejs -- The link of button needs modification-->
+<%- partial('../partial/sidemenu.ejs') %>
+    <div class="content admin w-100">
+        <h5 class="main-heading1">
+            課程管理<span class="highlight">系統</span>
+            <a class="btn btn-primary btn-sm" href="/course/create">新增課程</a>
+        </h5>
+
+
+        <section>
+            <h6 class="main-heading2 mb-0">搜索及管理課程</h6>
+            <div action="/admin/course/list" method="GET">
+                <div class="row mx-sm-2">
+
+
+                    <div class="form-group col-12 col-sm-6">
+                        <label style="color: #888888; font-size: 16pt;" class="col-form-label">編號 Course Code</label>
+                        <input class="form-control" id="courseID" name="courseID" placeholder="請輸入編號 Input Course Code">
+
+                    </div>
+
+                    <div class="form-group col-12 col-sm-6">
+                        <label style="color: #888888; font-size: 16pt;" class="col-form-label">項目 Category</label>
+
+                        <select class="form-control" id="category" name="category">
+                            <option value="">請選擇項目 Select Category</option>
+
+                            <option value="技巧體操">技巧體操</option>
+
+                            <option value="健美體操">健美體操</option>
+
+                            <option value="競技體操">競技體操</option>
+
+                            <option value="普及體操">普及體操</option>
+
+                            <option value="藝術體操">藝術體操</option>
+
+                            <option value="彈網訓練">彈網訓練</option>
+
+                        </select>
+                    </div>
+
+
+                    <div class="form-group col-12 col-sm-6 ">
+                        <label style="color: #888888; font-size: 16pt;" class="col-form-label">學期 Phase</label>
+
+                        <%var todayYear=new Date().getFullYear(); var end=todayYear + 2;%>
+                            <select class="form-control" id="year" name="year">
+                                <option value="">請選擇學期 Select Phase</option>
+                                <% for (var year=todayYear-2; year <=end; year++){%>
+                                    <option value="<%=year%>,1">
+                                        <%=year%> Phase 1
+                                    </option>
+                                    <option value="<%=year%>,2">
+                                        <%=year%> Phase 2
+                                    </option>
+                                    <%}%>
+                            </select>
+                    </div><br>
+                    <div class="col-12 col-sm-12 d-flex flex-column-reverse">
+                        <button type="submit" onclick="fetchPage(20,0)" class="btn btn-primary"
+                            style="background-color: #83a70c; border-color: #83a70c; margin-left:auto; margin-right:auto;">搜尋
+                            Search</button>
+                    </div>
+                </div>
+
+                <br><br>
+
+            </div>
+            <a type="button" class="mx-sm-2" onclick="document.getElementById('importBrief').style.display='block'"
+                style="color: teal;"><u>Excel匯入指引 Excel Import Guidelines</u></a><br>
+            <span class="mx-sm-2">請在匯入檔案前下載 <a download="課程_範本.xlsx" href="/templates/course_template.xlsx"
+                    target="_blank">範本.xlsx</a> 並輸入資料。</span><br>
+            <span class="mx-sm-2">Please download <a download="course_template.xlsx"
+                    href="/templates/course_template.xlsx" target="_blank">template.xlsx</a> and input the
+                data before importing.</span><br>
+            <!-- Excel Import-->
+            <div>
+                <form class="d-inline" action="/course/import_xlsx" method="post" enctype="multipart/form-data">
+                    <input class="mx-sm-2" type="file"
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="file"><br>
+                    <button type="submit" class="btn btn-primary mx-sm-2"
+                        style="font-size: small; background-color:teal; border-color: teal;">匯入Excel<br>Excel
+                        Import</button>
+                </form>
+                <a type="button" class="btn btn-info mx-sm-2" style="font-size: small; color: white; float: right;"
+                    href="/course/export_xlsx">匯出Excel<br>Excel Export</a>
+            </div>
+            <div class="columns">
+                <div class="column">
+
+                </div>
+                <div class="column">
+                    <!-- Excel Export-->
+
+                    <!-- <button onclick="downloadExcel()">try</button> -->
+                </div>
+            </div>
+
+
+            <br><br>
+
+            <!-- list the asked courses  -->
+            <div id="p2" align-items='center'></div>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" style="display: none;">
+                        <a class="page-link" aria-label="Previous">
+                            <span aria-hidden="true" id="previousButton">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" id="firstLink">1</a></li>
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                    </li>
+                    <li class="page-item"><a class="page-link" id="previousLink">14</a></li>
+                    <li class="page-item"><a class="page-link" id="currentLink">15</a></li>
+                    <li class="page-item"><a class="page-link" id="nextLink">16</a></li>
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
+                    </li>
+                    <li class="page-item"><a class="page-link" id="lastLink">20</a></li>
+                    <li class="page-item" style="display: none;">
+                        <a class="page-link" aria-label="Next">
+                            <span aria-hidden="true" id="nextButton">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+
+
+        </section>
+    </div>
+
+    <!-- <script>
+
+        async function downloadExcel() {
+            var response = await fetch("/course/export_xlsx", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data.thoseCourses.courseID),
+                //(['7', '8', '9'])
+            });
+
+            console.log(response);
+
+        }
+
+    </script> -->
+
+    <script>
+        function setPagination(limit, offset, count) {
+            var previousButton = document.getElementById("previousButton");
+            var nextButton = document.getElementById("nextButton");
+            var firstLink = document.getElementById("firstLink");
+            var previousLink = document.getElementById("previousLink");
+            var currentLink = document.getElementById("currentLink");
+            var nextLink = document.getElementById("nextLink");
+            var lastLink = document.getElementById("lastLink");
+            var numOfRecords = count;
+
+            firstLink.onclick = function () { fetchPage(limit, 0) };
+            previousButton.onclick = function () { fetchPage(limit, (offset - limit)) };
+            previousLink.onclick = function () { fetchPage(limit, (offset - limit)) };
+            currentLink.onclick = function () { fetchPage(limit, offset) };
+            nextButton.onclick = function () { fetchPage(limit, (offset + limit)) };
+            nextLink.onclick = function () { fetchPage(limit, (offset + limit)) };
+            lastLink.onclick = function () { fetchPage(limit, (Math.ceil(numOfRecords / limit) - 1) * limit) };
+            var currentPageNumber = Math.floor(offset / limit) + 1;
+            previousLink.innerHTML = currentPageNumber - 1;
+            currentLink.innerHTML = currentPageNumber;
+            nextLink.innerHTML = currentPageNumber + 1;
+            lastLink.innerHTML = Math.ceil(numOfRecords / limit);
+            if (offset < limit) {
+                previousButton.setAttribute("disabled", true);
+                previousButton.href = "";
+                previousLink.style.display = "none";
+            } else {
+                previousButton.removeAttribute("disabled", false);
+                previousLink.style.display = "block";
+            }
+            if (offset + limit >= numOfRecords) {
+                nextButton.setAttribute("disabled", true);
+                nextButton.href = "";
+                nextLink.style.display = "none";
+            } else {
+                nextButton.removeAttribute("disabled", false);
+                nextLink.style.display = "block";
+            }
+        }
+        setPagination();
+    </script>
+    <script>
+        async function fetchPage(limit, offset) {
+
+            category = document.getElementById("category").value;
+            courseID = document.getElementById("courseID").value;
+            year = document.getElementById("year").value;
+            var response = await fetch('/admin/course/list?category=' + category + '&courseID=' + courseID + '&year=' + year + '&limit=' + limit + "&offset=" + offset);
+
+            if (response.ok) {
+                var data = await response.json();
+
+                // alert(JSON.stringify(data.thoseCourses));
+
+                var dynamicCode = ` 
+                <div class ="text-center">
+                <table class="table table-striped table-sm" >
+                    <thead>
+                        <tr>
+                            <th>編號</th>
+                            <th>項目</th>
+                            <th>日期</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                `;
+                data.thoseCourses.forEach(function (course) {
+                    dynamicCode += ` 
+                    
+                        <tr>
+                            <td>
+                                ${course.courseID}  
+                            </td>
+                            <td>
+                                ${course.category}  
+                            </td>
+                            <td>
+                                ${course.startDate}   至 ${course.endDate} 
+                            </td>
+                            <td class="action">
+                                <a class="btn btn-primary" href="/course/update/${course.id}">編輯</a>
+                                <button class="btn btn-danger ajax-with-confirm"
+                                    data-action="/course/delete/${course.id}" data-method="POST"
+                                    data-callback200="location.reload(true);" onclick="deleteCourse('${course.id}')">刪除</button>
+                                    
+                            </td>
+                        </tr>  
+                     `;
+                });
+                dynamicCode += `</table></div>`;
+                document.querySelector("#p2").innerHTML = dynamicCode;
+                setPagination(limit, offset, data.count);
+            } else {
+                alert(response.status + ": " + response.statusText);
+            }
+        };
+        fetchPage(20, 0);
+
+    </script>
+    <script>
+        async function deleteCourse(id) {
+            var r = confirm("確認刪除嗎?");
+
+            if (r) {
+                var response = await fetch("/course/delete/" + id, {
+                    // method: "DELETE"
+                    method: "POST"
+                });
+
+                if (response.ok) {
+                    // thoseCourses.status=3;
+                    // var html = await response.text();
+                    alert("已成功刪除");
+                    location.reload();
+                } else {
+                    alert(response.status + ": " + response.statusText);
+                }
+
+            }
+        };
+    </script>
